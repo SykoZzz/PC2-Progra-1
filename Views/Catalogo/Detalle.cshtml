@@ -1,0 +1,13 @@
+@model Inmueble
+<h2>@Model.Titulo</h2>
+<p>@Model.Direccion - @Model.Ciudad</p>
+<p>Precio: @Model.Precio</p>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <a asp-controller="Visitas" asp-action="Create" asp-route-inmuebleId="@Model.Id">Agendar visita</a>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Inicia sesión</a> para agendar visita</p>
+}
