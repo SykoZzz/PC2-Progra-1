@@ -11,18 +11,18 @@ public class Inmueble
 
     [Required]
     [StringLength(50)]
-    public required string Codigo { get; set; } // único
+    public string Codigo { get; set; } // único
 
     [Required]
-    public required string Titulo { get; set; }
+    public string Titulo { get; set; }
 
-    public required string Imagen { get; set; } // ruta o URL
+    public string Imagen { get; set; }
 
     [Required]
     public TipoInmueble Tipo { get; set; }
 
-    public required string Ciudad { get; set; }
-    public required string Direccion { get; set; }
+    public string Ciudad { get; set; }
+    public string Direccion { get; set; }
 
     [Range(0, int.MaxValue)]
     public int Dormitorios { get; set; }
@@ -37,7 +37,8 @@ public class Inmueble
     public decimal Precio { get; set; } // > 0
 
     public bool Activo { get; set; } = true;
-    public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
-    public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
+
+    public ICollection<Visita> Visitas { get; set; }
+    public ICollection<Reserva> Reservas { get; set; }
 }
 }
