@@ -26,6 +26,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+
+                        @* 🔹 Aquí agregamos el link al último inmueble *@
+                        @inject IHttpContextAccessor HttpContextAccessor
+                        @{
+                            var id = HttpContextAccessor.HttpContext?.Session.GetInt32("LastInmuebleId");
+                        }
+                        @if (id.HasValue)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@id.Value">
+                                    Volver al último inmueble
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
