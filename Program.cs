@@ -1,28 +1,30 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PortalInmobiliario.Data;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using PortalInmobiliario;
-using StackExchange.Redis; 
 using PortalInmobiliario.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 Conexión a SQLite (para tu App principal)
+// 🔹 Forzar URL binding desde variable de entorno (Render) o fallback local
+builder.WebHost.UseUrls(
+    Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000");
+
+// 🔹 Conexión a base de datos (SQLite local o la que configures en Render)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// 🔹 Identity
+// 🔹 Identity con roles habilitados
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
         options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>()   // ✅ Importante: habilitar roles
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<InmuebleCacheService>();
 
-// 🔹 Configuración de Redis
+// 🔹 Configuración de Redis (local o en Render)
 var redisConnection = builder.Configuration["Redis:ConnectionString"] ??
                       Environment.GetEnvironmentVariable("Redis__ConnectionString");
 
@@ -32,7 +34,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "PortalInmobiliario:";
 });
 
-// Configurar sesión (usando Redis ahora)
+// 🔹 Sesión usando Redis
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(2);
@@ -40,13 +42,13 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Inyectar ConnectionMultiplexer para funcionalidades avanzadas
+// 🔹 Inyectar ConnectionMultiplexer para funcionalidades avanzadas
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     ConnectionMultiplexer.Connect(redisConnection));
 
 var app = builder.Build();
 
-// 🔹 Migraciones + creación de roles y usuario demo
+// 🔹 Migraciones + creación de rol "Broker" y usuario demo
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -80,7 +82,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseSession();
+app.UseSession(); // ✅ antes de auth
 
 app.UseAuthentication();
 app.UseAuthorization();
