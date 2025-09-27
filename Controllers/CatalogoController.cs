@@ -43,7 +43,6 @@ public class CatalogoController : Controller
                                .Take(pageSize)
                                .ToListAsync();
 
-        // Guardar filtros en sesión (se usará en P4)
         HttpContext.Session.SetString("LastCatalogFilters", JsonSerializer.Serialize(new { ciudad, tipo, precioMin, precioMax, dormitorios }));
 
         var vm = new CatalogoViewModel { Inmuebles = items, Page = page, PageSize = pageSize, Total = total, Ciudad = ciudad, Tipo = tipo, PrecioMin = precioMin, PrecioMax = precioMax, Dormitorios = dormitorios };
@@ -55,7 +54,6 @@ public class CatalogoController : Controller
         var inmueble = await _db.Inmuebles.Include(i => i.Reservas).FirstOrDefaultAsync(i => i.Id == id);
         if (inmueble == null) return NotFound();
 
-        // guardar último inmueble visitado (se usará en P4)
         HttpContext.Session.SetInt32("LastInmuebleId", id);
 
         return View(inmueble);

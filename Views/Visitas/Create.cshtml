@@ -1,0 +1,23 @@
+@{
+    var inmuebleId = ViewBag.InmuebleId;
+}
+<h3>Agendar visita</h3>
+<form asp-action="Create" method="post">
+    <input type="hidden" name="inmuebleId" value="@inmuebleId" />
+    <div>
+        <label>Fecha Inicio</label>
+        <input type="datetime-local" name="fechaInicio" required />
+    </div>
+    <div>
+        <label>Fecha Fin</label>
+        <input type="datetime-local" name="fechaFin" required />
+    </div>
+    <div>
+        <label>Notas</label>
+        <textarea name="notas"></textarea>
+    </div>
+    <div>
+        <button type="submit">Solicitar visita</button>
+    </div>
+    <div asp-validation-summary="All"></div>
+</form>

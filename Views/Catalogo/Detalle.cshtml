@@ -5,9 +5,22 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <a asp-controller="Visitas" asp-action="Create" asp-route-inmuebleId="@Model.Id">Agendar visita</a>
+    <div>
+        <a asp-controller="Visitas" asp-action="Create" asp-route-inmuebleId="@Model.Id" class="btn btn-secondary">
+            Agendar visita
+        </a>
+
+        <form asp-controller="Visitas" asp-action="ReservarAhora" method="post" style="display:inline;">
+            <input type="hidden" name="inmuebleId" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary">Reservar ahora (48h)</button>
+        </form>
+    </div>
 }
 else
 {
-    <p><a asp-area="Identity" asp-page="/Account/Login">Inicia sesión</a> para agendar visita</p>
+    <p>
+        <a asp-area="Identity" asp-page="/Account/Login">Inicia sesión</a> para agendar visita o reservar
+    </p>
 }
+@if(TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
+@if(TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
